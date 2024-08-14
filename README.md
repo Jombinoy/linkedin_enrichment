@@ -19,24 +19,25 @@ This project interacts with a database and an external API to enrich company dat
 ## Installation
 
 1. Clone the repository:
-git clone https://github.com/Jombinoy/linkedin_enrichment.git
-cd linkedin_enrichment
+- git clone https://github.com/Jombinoy/linkedin_enrichment.git
+- cd linkedin_enrichment
 
 2. Install dependencies:
-This project uses only the Python standard library, so no additional packages are required.
+- This project uses only the Python standard library, so no additional packages are required.
 
 3. Set up the database:
 Run the following script to create the necessary tables and insert sample data:
-python setup_database.py
+- python setup_database.py
 4. Extract Data:
-Run the extract_data.py script to fetch company data from the database:
+- Run the extract_data.py script to fetch company data from the database:
 Sample Output:
+
 (1, 'https://www.linkedin.com/company/microsoft')
 (2, 'https://www.linkedin.com/company/facebook')
 (3, 'https://www.linkedin.com/company/adobe')
 5. Enrich Data:
 Run the enrich_data.py script to enrich company data using the LinkedIn Bulk Data Scraper API:
-python enrich_data.py
+- python enrich_data.py
 Ensure you replace `API_KEY` in enrich_data.py with your actual API key.
 
 Sample Output:
@@ -68,8 +69,8 @@ If you want to contribute to this project, please follow these steps:
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+- This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Contact
 
-For any questions, please contact jombinoy24@gmail.com.
+- For any questions, please contact jombinoy24@gmail.com.
