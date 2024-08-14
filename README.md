@@ -33,20 +33,26 @@ Run the following script to create the necessary tables and insert sample data:
 Sample Output:
 
 (1, 'https://www.linkedin.com/company/microsoft')
+
 (2, 'https://www.linkedin.com/company/facebook')
+
 (3, 'https://www.linkedin.com/company/adobe')
+
 5. Enrich Data:
 Run the enrich_data.py script to enrich company data using the LinkedIn Bulk Data Scraper API:
 - python enrich_data.py
 Ensure you replace `API_KEY` in enrich_data.py with your actual API key.
 
 Sample Output:
+
 Status Code: 200
 Response Headers: {'Content-Type': 'application/json', ...}
 Response Text: {"success": true, "data": {"companyName": "Microsoft", "industry": "Software", "websiteUrl": "https://www.microsoft.com"}}
+
 Status Code: 200
 Response Headers: {'Content-Type': 'application/json', ...}
 Response Text: {"success": true, "data": {"companyName": "Facebook", "industry": "Social Media", "websiteUrl": "https://www.facebook.com"}}
+
 Status Code: 200
 Response Headers: {'Content-Type': 'application/json', ...}
 Response Text: {"success": true, "data": {"companyName": "Adobe", "industry": "Software", "websiteUrl": "https://www.adobe.com"}}
