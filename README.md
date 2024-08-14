@@ -19,8 +19,8 @@ This project interacts with a database and an external API to enrich company dat
 ## Installation
 
 1. Clone the repository:
-git clone https://github.com/yourusername/your-repo.git
-cd your-repo
+git clone https://github.com/Jombinoy/linkedin_enrichment.git
+cd linkedin_enrichment
 
 2. Install dependencies:
 This project uses only the Python standard library, so no additional packages are required.
