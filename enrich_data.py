@@ -1,8 +1,9 @@
-import requests
+import http.client
+import json
 import sqlite3
 
-API_URL = 'https://linkedin-bulk-data-scraper.p.rapidapi.com/company'
-API_KEY = 'baeddbbaccmsh6819bc6f1419165p140dddjsndd18de2792dd'  # Replace with your actual API key
+API_HOST = 'linkedin-bulk-data-scraper.p.rapidapi.com'
+API_KEY = '586d0454f3msh326cc876bfd964ep1ef269jsn2ad4b1013205'  # Replace with your actual API key
 
 def enrich_data():
     conn = sqlite3.connect('company_data.db')
@@ -11,42 +12,52 @@ def enrich_data():
     cursor.execute("SELECT company_id, company_linkedin_url FROM companies")
     company_data = cursor.fetchall()
 
-    headers = {
-        'X-RapidAPI-Key': API_KEY,
-        'X-RapidAPI-Host': 'linkedin-bulk-data-scraper.p.rapidapi.com',
-        'Content-Type': 'application/json'
-    }
-
     for company_id, linkedin_url in company_data:
-        response = requests.post(API_URL, headers=headers, json={"link": linkedin_url})
+        conn_http = http.client.HTTPSConnection(API_HOST)
 
-        print("Status Code:", response.status_code)
+        payload = json.dumps({"link": linkedin_url})
+        headers = {
+            'x-rapidapi-key': API_KEY,
+            'x-rapidapi-host': API_HOST,
+            'Content-Type': 'application/json'
+        }
+
+        conn_http.request("POST", "/company", payload, headers)
+
+        response = conn_http.getresponse()
+        response_data = response.read().decode("utf-8")
+
+        print("Status Code:", response.status)
         print("Response Headers:", response.headers)
-        print("Response Text:", response.text[:500])  # Print first 500 chars for debugging
+        print("Response Text:", response_data[:500])  # Print first 500 chars for debugging
 
-        if response.status_code == 200:
+        if response.status == 200:
             try:
-                enriched_data = response.json()
+                enriched_data = json.loads(response_data)
                 if enriched_data['success']:
                     data = enriched_data['data']
-                    # Extract relevant fields from 'data'
-                    company_name = data.get('companyName', '')
-                    locations = data.get('locations', [])
                     
-                    # Process locations or other nested data as needed
-                    location_info = ', '.join([f"{loc['city']}, {loc['country']}" for loc in locations])
+                    # Filter out unwanted fields
+                    filtered_data = {k: v for k, v in data.items() if not any(sub in k for sub in ['affiliatedOrganizations', 'locations', 'similarOrganizations'])}
+                    
+                    # Extract relevant fields from 'filtered_data'
+                    company_name = filtered_data.get('companyName', '')
+                    industry = filtered_data.get('industry', '')
+                    website_url = filtered_data.get('websiteUrl', '')
 
-                    # Insert or update the enriched data
+                    # Insert or update the enriched data in the database
                     cursor.execute('''
-                    INSERT OR REPLACE INTO enriched_companies (company_id, enriched_field_1, enriched_field_2)
-                    VALUES (?, ?, ?)
-                    ''', (company_id, company_name, location_info))
+                    INSERT OR REPLACE INTO enriched_companies (company_id, company_name, industry, website_url)
+                    VALUES (?, ?, ?, ?)
+                    ''', (company_id, company_name, industry, website_url))
                 else:
                     print("API response success is False:", enriched_data)
             except ValueError as e:
                 print("Error decoding JSON:", e)
         else:
-            print("API request failed. Status code:", response.status_code)
+            print("API request failed. Status code:", response.status)
+
+        conn_http.close()
 
     conn.commit()
     conn.close()
